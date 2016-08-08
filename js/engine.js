@@ -94,7 +94,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        //player.update();
     }
 
     /* This function initially draws the "game level", it will then call
@@ -115,8 +115,10 @@ var Engine = (function(global) {
                 'images/grass-block.png',   // Row 1 of 2 of grass
                 'images/grass-block.png'    // Row 2 of 2 of grass
             ],
-            numRows = 6,
+            numRows = rowImages.length, // makes the applicaton more robust to change; say, for instance, if we added more rows in the future
             numCols = 5,
+            rowMultiplicant = 83,
+            colMultiplicant = 101,
             row, col;
 
         /* Loop through the number of rows and columns we've defined above
@@ -132,7 +134,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * colMultiplicant, row * rowMultiplicant);
             }
         }
 
@@ -166,13 +168,19 @@ var Engine = (function(global) {
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
      */
+    var characters = [
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png'
+    ];
     Resources.load([
         'images/stone-block.png',
         'images/water-block.png',
         'images/grass-block.png',
-        'images/enemy-bug.png',
-        'images/char-boy.png'
-    ]);
+        'images/enemy-bug.png'
+    ].concat(characters));
     Resources.onReady(init);
 
     /* Assign the canvas' context object to the global variable (the window
@@ -180,4 +188,7 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+
+    /* Make the characters array globally available */
+    global.characters = characters;
 })(this);
