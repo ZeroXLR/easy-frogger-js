@@ -23,10 +23,26 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        allimgwidths = 101,
+        /* This array holds the relative URL to the image used
+         * for that particular row of the game level.
+         */
+        rowImages = [
+                'images/water-block.png',   // Top row is water
+                'images/stone-block.png',   // Row 1 of 3 of stone
+                'images/stone-block.png',   // Row 2 of 3 of stone
+                'images/stone-block.png',   // Row 3 of 3 of stone
+                'images/grass-block.png',   // Row 1 of 2 of grass
+                'images/grass-block.png'    // Row 2 of 2 of grass
+            ],
+        numRows = rowImages.length, // makes the applicaton more robust to change; say, for instance, if we added more rows in the future
+        numCols = 5,
+        pixelGapPerRow = 83,
+        pixelGapPerCol = allimgwidths;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    canvas.width = numCols * allimgwidths;
+    canvas.height = numRows * allimgwidths;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -64,7 +80,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        // reset();
         lastTime = Date.now();
         main();
     }
@@ -104,22 +120,7 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
-        /* This array holds the relative URL to the image used
-         * for that particular row of the game level.
-         */
-        var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
-            ],
-            numRows = rowImages.length, // makes the applicaton more robust to change; say, for instance, if we added more rows in the future
-            numCols = 5,
-            rowMultiplicant = 83,
-            colMultiplicant = 101,
-            row, col;
+        var row, col;
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -134,7 +135,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * colMultiplicant, row * rowMultiplicant);
+                ctx.drawImage(Resources.get(rowImages[row]), col * pixelGapPerCol, row * pixelGapPerRow);
             }
         }
 
@@ -160,9 +161,9 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
-    function reset() {
-        // noop
-    }
+    // function reset() {
+    //     // noop
+    // }
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -191,4 +192,13 @@ var Engine = (function(global) {
 
     /* Make the characters array globally available */
     global.characters = characters;
+
+    /* Make certain grid values globally available */
+    global.gridvals = {
+        allimgwidths: allimgwidths,
+        numRows: numRows,
+        numCols: numCols,
+        pixelGapPerRow: pixelGapPerRow,
+        pixelGapPerCol: pixelGapPerCol
+    };
 })(this);

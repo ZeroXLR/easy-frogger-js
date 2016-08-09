@@ -6,10 +6,16 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = 0;
-    this.y = 41.5; // default y where each enemy is created just below the water row
-    this.speed = Math.random() * 404 + 202;
+    this.x = Enemy.initial_x;
+    this.y = Enemy.default_y; // default y where each enemy is created just below the water row
+    this.speed = Math.random() * Enemy.range_speed + Enemy.min_speed;
 };
+
+// A couple of constants (i.e. static variables in Java lingo) associated with the Enemy class
+Enemy.initial_x = 0;
+Enemy.default_y = gridvals.pixelGapPerRow / 2;
+Enemy.min_speed = gridvals.pixelGapPerCol;
+Enemy.range_speed = ctx.canvas.width - Enemy.min_speed;
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -30,10 +36,17 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = characters[Math.floor(Math.random() * characters.length)]; // randomly select a character on each instantiation
-    this.x = 202; // initial_x = middle_column_index * 101 = 2 * 101
-    this.y = 415; // initial_y = last_row_index * 83 = 5 * 83
+    this.x = Player.initial_x; // initial_x = middle_column_index * 101 = 2 * 101
+    this.y = Player.initial_y; // initial_y = last_row_index * 83 = 5 * 83
 };
 
+// A couple of constants (i.e. static variables in Java lingo) associated with the Player class
+Player.initial_x = Math.floor(gridvals.numCols / 2) * gridvals.pixelGapPerCol;
+Player.initial_y = (gridvals.numRows - 1) * gridvals.pixelGapPerRow;
+Player.stride_x = gridvals.pixelGapPerRow / 2;
+Player.stride_y = gridvals.pixelGapPerCol / 2;
+Player.max_x = ctx.canvas.width - gridvals.allimgwidths; // can't go more east than this
+Player.max_y = Player.initial_y; // can't go more south than this
 // Player.prototype.update = function() {
 //
 // };
@@ -43,18 +56,19 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(key) {
+    var newpos;
     switch (key) {
         case 'left':
-            this.x = Math.max(this.x - 50.5, 0);
+            this.x = (newpos = this.x - Player.stride_x) > 0 ? newpos : 0;
             break;
         case 'up':
-            this.y = Math.max(this.y - 50.5, 0);
+            this.y = (newpos = this.y - Player.stride_y) > 0 ? newpos : 0;
             break;
         case 'right':
-            this.x = Math.min(this.x + 50.5, 404);
+            this.x = (newpos = this.x + Player.stride_x) < Player.max_x ? newpos : Player.max_x;
             break;
         case 'down':
-            this.y = Math.min(this.y + 50.5, 415);
+            this.y = (newpos = this.y + Player.stride_y) < Player.max_y ? newpos : Player.max_y;
             break;
     }
 };
