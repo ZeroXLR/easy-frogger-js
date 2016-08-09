@@ -31,6 +31,13 @@ Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
+Enemy.y_limit = gridvals.allimgwidths / 2;
+Enemy.x_limit = (gridvals.allimgwidths / 3) * 2;
+
+Enemy.prototype.collidesWith = function(entity) {
+    return entity.x <= (this.x + Enemy.x_limit) && (this.x - Enemy.x_limit) <= entity.x && entity.y <= (this.y + Enemy.y_limit) && (this.y - Enemy.y_limit) <= entity.y;
+};
+
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -50,10 +57,11 @@ Player.max_y = Player.initial_y; // can't go more south than this
 // Player.prototype.update = function() {
 //
 // };
+Player.prototype.reachedWater = function() {
+    return this.y === 0;
+}
 
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
+Player.prototype.render = Enemy.prototype.render;
 
 Player.prototype.handleInput = function(key) {
     var newpos;
@@ -81,26 +89,26 @@ function enemyFactory(number) {
     if (number > 6) number = 6; // or else the enemies will just overlap which is pretty much the same as having a single enemy
     var enemies = [],
         enemy;
+    // From 6 possible locations randomly choose 'number' locations WITHOUT replacement
     (function(array) {
         var currentIndex = array.length,
             temporaryValue,
             randomIndex,
-            finalarray = [],
-            count = 0;
-        // While there remain elements to shuffle...
-        while (count < number) {
+            finalarray = []; // array to store only as many elements as needed
+        // While finalarray does not contain as many elements as required...
+        for (var count = 0; count < number; ++count) {
             // Pick a remaining element...
             randomIndex = Math.floor(Math.random() * currentIndex);
             --currentIndex;
             finalarray.push(array[randomIndex]);
-            ++count;
+
             // And swap it with the current element.
             temporaryValue = array[currentIndex];
             array[currentIndex] = array[randomIndex];
             array[randomIndex] = temporaryValue;
         }
         return finalarray;
-    })([1, 2, 3, 4, 5, 6]).sort(function(a, b) { // sorting makes sure that the enemies are added according to perpective i.e. further enemies seem 'behind' closer ones
+    })([1, 2, 3, 4, 5, 6]).sort(function(a, b) { // sorting makes sure that the enemies are added according to perpective i.e. further enemies seem to be behind closer ones
                               return a - b;
                           })
                           .forEach(function(element) {

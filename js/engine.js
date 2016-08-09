@@ -61,8 +61,10 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
+        // update(dt); // useless since is just calls updateEntities()
+        updateEntities(dt);
         render();
+        checkCollisions();
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -72,8 +74,10 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        main.stop || win.requestAnimationFrame(main);
     }
+
+    main.stop = false;
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -94,9 +98,25 @@ var Engine = (function(global) {
      * functionality this way (you could just implement collision detection
      * on the entities themselves within your app.js file).
      */
-    function update(dt) {
-        updateEntities(dt);
-        // checkCollisions();
+    // function update(dt) {
+    //     updateEntities(dt);
+    //     // checkCollisions();
+    // }
+
+    function checkCollisions() {
+        if (player.reachedWater()) {
+            alert('YIPPIE! I WIN!! Time for a refreshing swim!');
+            main.stop = true;
+        } else {
+            for (var i = 0; i < allEnemies.length; ++i) {
+                if (allEnemies[i].collidesWith(player)) {
+                    alert('WAAAAAH!! Icky bug jumped on me! I must bathe back home!!');
+                    player.x = Player.initial_x;
+                    player.y = Player.initial_y;
+                    break;
+                }
+            }
+        }
     }
 
     /* This is called by the update function and loops through all of the
