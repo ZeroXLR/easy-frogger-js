@@ -1,6 +1,17 @@
-frontend-nanodegree-arcade-game
-===============================
+# A Simplistic Frogger Game
 
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that this **README.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+### Description and Objective:
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+This is a simple variation of the popular Frogger game. In this game, the winning objective is to get the hero/heroine from his/her original position to the water for a refreshing swim. However, you cannot collide with any pesky bugs while going there; if you do, the hero/heroine must go back home for a bath!
+
+### Controls:
+
+The controls are simple. Simply move the hero/heroine with the **up**, **down**, **left** or **right** keys (which have the obvious effects).
+
+### Installation:
+
+To get a local copy of this game on your own machine, simply run
+
+* **git clone [https://github.com/ZeroXLR/frontend-nanodegree-arcade-game.git](https://github.com/ZeroXLR/frontend-nanodegree-arcade-game.git)**
+
+Doing this will create a folder called **frontend-nanodegree-arcade-game**. In there, simply open the file **index.html** on your favorite browser to play.
