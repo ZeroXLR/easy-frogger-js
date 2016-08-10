@@ -1,13 +1,33 @@
+'use strict';
+
+// Parent class of both the Enemy and Player classes
+var Entity = function(sprite, x, y) {
+    this.sprite = sprite;
+    this.x = x;
+    this.y = y;
+};
+
+// A couple of constant (static in Java lingo) variables and functions of Entity
+Entity.x_collision_limit = (gridvals.allimgwidths / 3) * 2;
+Entity.y_collision_limit = gridvals.allimgwidths / 2;
+// Makes sure that the child class has a properly structured prototype
+Entity.passOwnPrototypeTo = function(Child) {
+    Child.prototype = Object.create(Entity.prototype);
+    Child.prototype.constructor = Child;
+};
+
+Entity.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Entity.prototype.collidesWith = function(entity) {
+    return entity.x <= (this.x + Entity.x_collision_limit) && (this.x - Entity.x_collision_limit) <= entity.x && entity.y <= (this.y + Entity.y_collision_limit) && (this.y - Entity.y_collision_limit) <= entity.y;
+};
+
 // Enemies our player must avoid
 var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.x = Enemy.initial_x;
-    this.y = Enemy.default_y; // default y where each enemy is created just below the water row
+    // call the parent constructor under this particular context
+    Entity.call(this, 'images/enemy-bug.png', Enemy.initial_x, Enemy.default_y);
     this.speed = Math.random() * Enemy.range_speed + Enemy.min_speed;
 };
 
@@ -16,6 +36,8 @@ Enemy.initial_x = 0;
 Enemy.default_y = gridvals.pixelGapPerRow / 2;
 Enemy.min_speed = gridvals.pixelGapPerCol;
 Enemy.range_speed = ctx.canvas.width - Enemy.min_speed;
+
+Entity.passOwnPrototypeTo(Enemy);
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -26,25 +48,16 @@ Enemy.prototype.update = function(dt) {
     this.x = (this.x + dt * this.speed) % ctx.canvas.width;
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-Enemy.y_limit = gridvals.allimgwidths / 2;
-Enemy.x_limit = (gridvals.allimgwidths / 3) * 2;
-
-Enemy.prototype.collidesWith = function(entity) {
-    return entity.x <= (this.x + Enemy.x_limit) && (this.x - Enemy.x_limit) <= entity.x && entity.y <= (this.y + Enemy.y_limit) && (this.y - Enemy.y_limit) <= entity.y;
-};
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = characters[Math.floor(Math.random() * characters.length)]; // randomly select a character on each instantiation
-    this.x = Player.initial_x; // initial_x = middle_column_index * 101 = 2 * 101
-    this.y = Player.initial_y; // initial_y = last_row_index * 83 = 5 * 83
+    Entity.call(
+        this,
+        characters[Math.floor(Math.random() * characters.length)], // randomly select a character on each instantiation
+        Player.initial_x, // initial_x = middle_column_index * 101 = 2 * 101
+        Player.initial_y // initial_y = last_row_index * 83 = 5 * 83
+    );
 };
 
 // A couple of constants (i.e. static variables in Java lingo) associated with the Player class
@@ -54,14 +67,12 @@ Player.stride_x = gridvals.pixelGapPerRow / 2;
 Player.stride_y = gridvals.pixelGapPerCol / 2;
 Player.max_x = ctx.canvas.width - gridvals.allimgwidths; // can't go more east than this
 Player.max_y = Player.initial_y; // can't go more south than this
-// Player.prototype.update = function() {
-//
-// };
+
+Entity.passOwnPrototypeTo(Player);
+
 Player.prototype.reachedWater = function() {
     return this.y === 0;
-}
-
-Player.prototype.render = Enemy.prototype.render;
+};
 
 Player.prototype.handleInput = function(key) {
     var newpos;
