@@ -9,10 +9,6 @@
  * the screen, it may look like just that image/character is moving or being
  * drawn but that is not the case. What's really happening is the entire "scene"
  * is being drawn over and over, presenting the illusion of animation.
- *
- * This engine is available globally via the Engine variable and it also makes
- * the canvas' context (ctx) object globally available to make writing app.js
- * a little simpler to work with.
  */
 var Engine = (function(global) {
 	/* Predefine the variables we'll be using within this scope,
@@ -73,6 +69,7 @@ var Engine = (function(global) {
 
 		/* Use the browser's requestAnimationFrame function to call this
 		 * function again as soon as the browser is able to draw another frame.
+		 * Note: the function is asynchronous
 		 */
 		main.stop || win.requestAnimationFrame(main);
 	}
@@ -108,11 +105,11 @@ var Engine = (function(global) {
 			alertWithoutRenderBlocking('YIPPIE! I WIN!! Time for a refreshing swim!');
 			main.stop = true;
 		} else {
-			for (var i = 0; i < allEnemies.length; ++i) {
+			var i, length = allEnemies.length;
+			for (i = 0; i < length; ++i) {
 				if (allEnemies[i].collidesWith(player)) {
 					alertWithoutRenderBlocking('WAAAAAH!! Icky bug jumped on me! I must bathe back home!!');
-					player.x = Player.initial_x;
-					player.y = Player.initial_y;
+					player.restart();
 					break;
 				}
 			}
@@ -223,21 +220,16 @@ var Engine = (function(global) {
 	].concat(characters));
 	Resources.onReady(init);
 
-	/* Assign the canvas' context object to the global variable (the window
-	 * object when run in a browser) so that developers can use it more easily
-	 * from within their app.js files.
-	 */
-	global.ctx = ctx;
-
-	/* Make the characters array globally available */
-	global.characters = characters;
-
-	/* Make certain grid values globally available */
-	global.gridvals = {
+	// Make certain values available
+	return {
+		ctx: ctx,
+		characters: characters,
 		allimgwidths: allimgwidths,
 		numRows: numRows,
 		numCols: numCols,
 		pixelGapPerRow: pixelGapPerRow,
-		pixelGapPerCol: pixelGapPerCol
+		pixelGapPerCol: pixelGapPerCol,
+		canvaswidth: ctx.canvas.width,
+		canvasheight: ctx.canvas.height,
 	};
 })(this);
