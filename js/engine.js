@@ -105,8 +105,7 @@ var Engine = (function(global) {
 			alertWithoutRenderBlocking('YIPPIE! I WIN!! Time for a refreshing swim!');
 			main.stop = true;
 		} else {
-			var i, length = allEnemies.length;
-			for (i = 0; i < length; ++i) {
+			for (var i = 0; i < allEnemies.length; ++i) {
 				if (allEnemies[i].collidesWith(player)) {
 					alertWithoutRenderBlocking('WAAAAAH!! Icky bug jumped on me! I must bathe back home!!');
 					player.restart();
@@ -130,8 +129,8 @@ var Engine = (function(global) {
 	 * has lower priority than the render queue.
 	 */
 	function alertWithoutRenderBlocking(message) {
-		setTimeout(function() {
-			alert(message);
+		global.setTimeout(function() {
+			global.alert(message);
 		}, 0);
 	}
 
