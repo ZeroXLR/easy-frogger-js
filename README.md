@@ -2,7 +2,7 @@
 
 ### Description and Objective:
 
-This is a simplistic version of the popular [**Frogger**](https://en.wikipedia.org/wiki/Frogger) game. In this game, the winning objective is to get the hero/heroine from his/her original position to the water for a refreshing swim. However, you cannot collide with any pesky bugs while going there; if you do, the hero/heroine must go back home for a bath!
+This is a simplistic version of the popular [**Frogger**](https://en.wikipedia.org/wiki/Frogger) game. In this game, the winning objective is to get the hero/heroine from his/her original position to the water for a refreshing swim. However, you cannot collide with any pesky bugs while going there; if you do, the hero/heroine must go back home for a bath.
 
 ### Controls:
 
