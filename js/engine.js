@@ -125,31 +125,21 @@
  * is being drawn over and over, presenting the illusion of animation.
  */
 var Engine = (function(global) {
-	/* Predefine the variables we'll be using within this scope,
-	 * create the canvas element, grab the 2D context for that canvas
-	 * set the canvas element's height/width and add it to the DOM.
-	 */
-	var doc = global.document,
-		win = global.window,
-		canvas = doc.createElement('canvas'),
-		ctx = canvas.getContext('2d'),
-		lastTime,
-		allimgwidths = 101,
-		/* This array holds the relative URL to the image used
-		 * for that particular row of the game level.
-		 */
-		rowImages = [
-			'images/water-block.png', // Top row is water
-			'images/stone-block.png', // Row 1 of 3 of stone
-			'images/stone-block.png', // Row 2 of 3 of stone
-			'images/stone-block.png', // Row 3 of 3 of stone
-			'images/grass-block.png', // Row 1 of 2 of grass
-			'images/grass-block.png' // Row 2 of 2 of grass
-		],
-		numRows = rowImages.length, // makes the applicaton more robust to change; say, for instance, if we added more rows in the future
-		numCols = 5,
-		pixelGapPerRow = 83,
-		pixelGapPerCol = allimgwidths;
+	var doc = global.document, win = global.window, canvas = doc.createElement('canvas'), ctx = canvas.getContext('2d'),
+	    lastTime,
+	    allimgwidths = 101,
+	    /* This array holds the relative URL to the image used
+	     * for that particular row of the game level.
+	     */
+	    rowImages = [
+	    	'images/water-block.png', // Top row is water
+	    	'images/stone-block.png', // Row 1 of 3 of stone
+	    	'images/stone-block.png', // Row 2 of 3 of stone
+	    	'images/stone-block.png', // Row 3 of 3 of stone
+	    	'images/grass-block.png', // Row 1 of 2 of grass
+	    	'images/grass-block.png' // Row 2 of 2 of grass
+	    ],
+	    numRows = rowImages.length, numCols = 5, pixelGapPerRow = 83, pixelGapPerCol = allimgwidths;
 
 	canvas.width = numCols * allimgwidths;
 	canvas.height = numRows * allimgwidths;
@@ -163,10 +153,9 @@ var Engine = (function(global) {
 		 * requires smooth animation. Because everyone's computer processes
 		 * instructions at different speeds we need a constant value that
 		 * would be the same for everyone (regardless of how fast their
-		 * computer is) - hurray time!
+		 * computer is)
 		 */
-		var now = Date.now(),
-			dt = (now - lastTime) / 1000.0;
+		var now = Date.now(), dt = (now - lastTime) / 1000.0;
 
 		/* Call our update/render functions, pass along the time delta to
 		 * our update function since it may be used for smooth animation.
@@ -200,18 +189,8 @@ var Engine = (function(global) {
 	}
 
 	/* This function is called by main (our game loop) and itself calls all
-	 * of the functions which may need to update entity's data. Based on how
-	 * you implement your collision detection (when two entities occupy the
-	 * same space, for instance when your character should die), you may find
-	 * the need to add an additional function call here. For now, we've left
-	 * it commented out - you may or may not want to implement this
-	 * functionality this way (you could just implement collision detection
-	 * on the entities themselves within your app.js file).
+	 * of the functions which may need to update entity's data.
 	 */
-	// function update(dt) {
-	//     updateEntities(dt);
-	//     // checkCollisions();
-	// }
 
 	function checkCollisions() {
 		if (player.reachedWater()) {
@@ -249,16 +228,12 @@ var Engine = (function(global) {
 
 	/* This is called by the update function and loops through all of the
 	 * objects within your allEnemies array as defined in app.js and calls
-	 * their update() methods. It will then call the update function for your
-	 * player object. These update methods should focus purely on updating
-	 * the data/properties related to the object. Do your drawing in your
-	 * render methods.
+	 * their update() methods.
 	 */
 	function updateEntities(dt) {
 		allEnemies.forEach(function(enemy) {
 			enemy.update(dt);
 		});
-		//player.update();
 	}
 
 	/* This function initially draws the "game level", it will then call
@@ -307,7 +282,7 @@ var Engine = (function(global) {
 
 	/* This function does nothing but it could have been a good place to
 	 * handle game reset states - maybe a new game menu or a game over screen
-	 * those sorts of things. It's only called once by the init() method.
+	 * those sorts of things.
 	 */
 	// function reset() {
 	//     // noop
@@ -348,10 +323,8 @@ var Engine = (function(global) {
 
 // Parent class of both the Enemy and Player classes
 var Entity = (function() {
-	// A couple of private constants (private static variables in Java lingo) and functions of Entity
-	var x_collision_limit = (Engine.allimgwidths / 3) * 2,
-		y_collision_limit = Engine.allimgwidths / 2,
-		ctx = Engine.ctx;
+	// A couple of private constants (private static variables in Java lingo)
+	var x_collision_limit = (Engine.allimgwidths / 3) * 2, y_collision_limit = Engine.allimgwidths / 2, ctx = Engine.ctx;
 
 	// x0 and y0 must be instance specific; if it were private static like the variables above, they would change everytime a new Enemy() or a new Player() is made
 	function Entity(sprite, x, y) {
@@ -385,9 +358,7 @@ var Entity = (function() {
 // Enemies our player must avoid
 var Enemy = (function() {
 	// A couple of private constants (i.e. private static variables in Java lingo) associated with the Enemy class
-	var canvaswidth = Engine.canvaswidth,
-		pixelGapPerRow = Engine.pixelGapPerRow,
-		min_speed = canvaswidth / 2;
+	var canvaswidth = Engine.canvaswidth, pixelGapPerRow = Engine.pixelGapPerRow, min_speed = canvaswidth / 2;
 	var range_speed = canvaswidth;
 
 	function Enemy() {
@@ -412,12 +383,8 @@ var Enemy = (function() {
 
 var Player = (function() {
 	// A couple of private constants (i.e. private static variables in Java lingo) associated with the Player class
-	var characters = Engine.characters,
-		numCols = Engine.numCols,
-		pixelGapPerCol = Engine.pixelGapPerCol;
-	var stride_x = Engine.pixelGapPerRow / 2,
-		stride_y = pixelGapPerCol / 2,
-		max_x = Engine.canvaswidth - Engine.allimgwidths; // can't go more east than this
+	var characters = Engine.characters, numCols = Engine.numCols, pixelGapPerCol = Engine.pixelGapPerCol;
+	var stride_x = Engine.pixelGapPerRow / 2, stride_y = pixelGapPerCol / 2, max_x = Engine.canvaswidth - Engine.allimgwidths; // can't go more east than this
 	var max_y = (Engine.numRows - 1) * Engine.pixelGapPerRow; // can't go more south than this
 
 	function Player() {
@@ -459,16 +426,13 @@ var Player = (function() {
 // A factory to create enemies
 function enemyFactory(number) {
 	if (number > 6) number = 6; // or else the enemies will just overlap which is pretty much the same as having a single enemy
-	var enemies = [],
-		enemy;
+	var enemies = [], enemy;
 	// From 6 possible locations randomly choose 'number' locations WITHOUT replacement
 	(function(array) {
-		var currentIndex = array.length,
-			temporaryValue,
-			randomIndex,
-			finalarray = [], // array to store only as many elements as needed
+		var currentIndex = array.length, temporaryValue, randomIndex,
+		    finalarray = [], // array to store only as many elements as needed
 		// While finalarray does not contain as many elements as required...
-			count;
+		    count;
 
 		for (var count = 0; count < number; ++count) {
 			// Pick a remaining element...
@@ -491,8 +455,7 @@ function enemyFactory(number) {
 		});
 	return enemies;
 }
-var allEnemies = enemyFactory(4);
-var player = new Player();
+var allEnemies = enemyFactory(4), player = new Player();
 
 
 // This listens for key presses and sends the keys to your
